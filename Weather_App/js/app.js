@@ -10,7 +10,9 @@ const $inputCity = document.querySelector("#search");
 
 // get button elements
 const $addCityBtn = document.querySelector("#add-city");
-const $closeWindowBtn = document.querySelector(".btn--close")
+const $closeWeatherBoxBtn = document.querySelectorAll(".module__weather .btn--close")
+const $closeFormBtn = document.querySelector(".module__form > button");
+
 
 // get elements for current weather display
 const $weatherInfo = document.querySelector(".weather__info");
@@ -32,7 +34,6 @@ const getIp = async () => {
     try {
         let ipData = await fetch('http://ip-api.com/json/');
         ipData = await ipData.json();
-        console.log(ipData);
         return ipData;
     } catch (e) {
         console.log('Something went wrong', e);
@@ -45,7 +46,7 @@ const getWeatherData = async (latitude, longitude) => {
     try {
         let weatherData = await fetch(`https://cors-anywhere.herokuapp.com/http://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&appid=${OPENWEATHER_API_KEY}&units=metric`);
         weatherData = await weatherData.json();
-        console.log(weatherData);
+        // console.log(weatherData);
         return weatherData;
     } catch (e) {
         console.log('Something went wrong', e);
@@ -53,13 +54,14 @@ const getWeatherData = async (latitude, longitude) => {
     }
 };
 
-// get geolocation by city name
+// get city geolocation
 const getCityGeolocation = async (city) => {
     try {
         let geolocationData = await fetch(`https://graphhopper.com/api/1/geocode?key=${GRAPHHOPPER_API_KEY}&q=${city}`);
         geolocationData = await geolocationData.json();
         return geolocationData.hits[0].point;
     } catch (e) {
+        alert("Sorry, this location doesn't exist");
         console.log("Something went wrong", e);
     }
 };
@@ -71,8 +73,7 @@ getIp().then(ip => {
     let long = ip.lon;
     let location = ip.city;
     getWeatherData(lat, long).then(data => {
-        $body.classList.remove('loading');
-        $app.classList.remove('hidden');
+        $cityWeatherBox.hidden = false;
         displayWeather(data, location);
     });
 })
@@ -80,34 +81,49 @@ getIp().then(ip => {
 // display form for adding a new city
 $addCityBtn.addEventListener("click", () => {
     $addCityForm.hidden = false;
-
-// display weather based on user's search
-    $addCityForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        let city = $inputCity.value;
-        getCityGeolocation(city).then(geolocationData => {
-            let latitude = geolocationData.lat;
-            let longitude = geolocationData.lng;
-            // console.log(geolocationData);
-            getWeatherData(latitude, longitude).then(weather => {
-                let $newCityWeatherBox = $cityWeatherBox.cloneNode(true);
-                $app.appendChild($newCityWeatherBox);
-                displayWeather(weather, city);
-            });
-        });
-    })
 });
+
+// hide city form
+$closeFormBtn.addEventListener("click", () => {
+    $addCityForm.hidden = true;
+})
+
+
+// display city weather based on user input
+$addCityForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    $body.classList.add("loading");
+    let city = $inputCity.value;
+    getCityGeolocation(city).then(geolocationData => {
+        let latitude = geolocationData.lat;
+        let longitude = geolocationData.lng;
+        getWeatherData(latitude, longitude).then(weather => {
+            let $newCityWeatherBox = $cityWeatherBox.cloneNode(true);
+            $app.insertBefore($newCityWeatherBox, $cityWeatherBox);
+            displayWeather(weather, city);
+        });
+    });
+});
+
+// close weather boxes
+$closeWeatherBoxBtn.forEach((button) => {
+    button.addEventListener("click", () => {
+            $app.removeChild(button.parentElement);
+        }
+    )
+});
+
 
 // function for displaying weather data
 const displayWeather = (weatherData, location) => {
 
-    console.log(weatherData);
+    $body.classList.remove("loading");
+
     let humidity = weatherData.current.humidity;
     let pressure = weatherData.current.pressure;
     let temp = weatherData.current.temp;
     let windSpeed = weatherData.current.wind_speed;
     let weatherIconNow = weatherData.current.weather[0].icon;
-    console.log(weatherIconNow);
 
 
     $city.innerHTML = location;
