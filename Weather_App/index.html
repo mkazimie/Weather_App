@@ -7,7 +7,7 @@
   <title>Weather App</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="loading">
 <header>
   <div class="container">
     <div class="logo"><img src="images/icons/logo.svg"/> Weather App</div>
@@ -44,40 +44,41 @@
         <div class="city">
           <span class="city__name"></span> <span class="btn btn--icon"><i class="material-icons">edit</i></span>
         </div>
-        <div class="temperature"><span class="temperature__value">16.5</span>&deg;C</div>
+        <div class="temperature"><span class="temperature__value"></span></div>
       </div>
 
       <ul class="weather__details">
-        <li><img src="images/icons/pressure.svg"/> <span class="pressure__value">998 hPa</span></li>
-        <li><img src="images/icons/humidity.svg"/> <span class="humidity__value">45%</span></li>
-        <li><img src="images/icons/wind-speed.svg"/> <span class="wind-speed__value">5.5 m/s</span></li>
+        <li><img src="images/icons/pressure.svg"/> <span class="pressure__value"></span></li>
+        <li><img src="images/icons/humidity.svg"/> <span class="humidity__value"></span></li>
+        <li><img src="images/icons/wind-speed.svg"/> <span class="wind-speed__value"></span></li>
       </ul>
 
       <ul class="weather__forecast">
         <li>
-          <span class="day">Tuesday</span> <img src="images/icons/clear-day.svg"/>
-          <span class="temperature"><span class="temperature__value">10.0</span>&deg;C</span>
+          <span class="day"> </span> <img src="images/icons/clear-day.svg"/>
+          <span class="temperature_forecast"></span>
         </li>
 
         <li>
-          <span class="day">Wednesday</span> <img src="images/icons/snow.svg"/>
-          <span class="temperature"><span class="temperature__value">-2.3</span>&deg;C</span>
+          <span class="day"> </span> <img src="images/icons/snow.svg"/>
+          <span class="temperature_forecast"></span>
         </li>
 
         <li>
-          <span class="day">Thursday</span> <img src="images/icons/rain.svg"/>
-          <span class="temperature"><span class="temperature__value">4.8</span>&deg;C</span>
+          <span class="day"> </span> <img src="images/icons/rain.svg"/>
+          <span class="temperature_forecast"></span>
         </li>
 
         <li>
-          <span class="day">Friday</span> <img src="images/icons/cloudy.svg"/>
-          <span class="temperature"><span class="temperature__value">5.0</span>&deg;C</span>
+          <span class="day"> </span> <img src="images/icons/cloudy.svg"/>
+          <span class="temperature_forecast"></span>
         </li>
 
         <li>
-          <span class="day">Saturday</span> <img src="images/icons/hail.svg"/>
-          <span class="temperature"><span class="temperature__value">8.6</span>&deg;C</span>
+          <span class="day"> </span> <img src="images/icons/cloudy.svg"/>
+          <span class="temperature_forecast"></span>
         </li>
+
       </ul>
     </div>
   </div>

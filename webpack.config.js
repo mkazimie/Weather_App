@@ -1,6 +1,8 @@
 const path = require("path");
 const entryPath = "Weather_App";
 const entryFile = "app.js";
+const Dotenv = require('dotenv-webpack');
+
 
 module.exports = {
     entry: `./${entryPath}/js/${entryFile}`,
@@ -17,6 +19,11 @@ module.exports = {
     node: {
         fs: "empty"
     },
+    plugins: [
+        new Dotenv({
+            path: path.resolve(__dirname,'.env')
+        }),
+    ],
     module: {
         rules: [
             {
