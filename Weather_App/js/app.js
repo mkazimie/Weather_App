@@ -1,7 +1,18 @@
 const GRAPHHOPPER_API_KEY = process.env.GRAPHHOPPER_API_KEY;
 const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY;
 
+// get main app elements
 const $body = document.querySelector("body");
+const $app = document.querySelector("#app");
+const $cityWeatherBox = document.querySelector(".module__weather");
+const $addCityForm = document.querySelector(".module__form");
+const $inputCity = document.querySelector("#search");
+
+// get button elements
+const $addCityBtn = document.querySelector("#add-city");
+const $closeWindowBtn = document.querySelector(".btn--close")
+
+// get elements for current weather display
 const $weatherInfo = document.querySelector(".weather__info");
 const $weatherDetails = document.querySelector(".weather__details");
 const $city = $weatherInfo.querySelector(".city__name");
@@ -11,11 +22,12 @@ const $pressure = $weatherDetails.querySelector(".pressure__value");
 const $windSpeed = $weatherDetails.querySelector(".wind-speed__value");
 const $icon = document.querySelector(".weather__icon img");
 
+//get elements for weather forecast display
 const $daysOfTheWeek = document.querySelectorAll(".day");
 const $daysOfTheWeekTemp = document.querySelectorAll(".temperature_forecast");
 const $dayOfTheWeekIcon = document.querySelectorAll(".weather__forecast img");
 
-
+// get geolocation from IP address
 const getIp = async () => {
     try {
         let ipData = await fetch('http://ip-api.com/json/');
@@ -28,7 +40,7 @@ const getIp = async () => {
     }
 }
 
-
+// get weather data from OpenWeatherMap API
 const getWeatherData = async (latitude, longitude) => {
     try {
         let weatherData = await fetch(`https://cors-anywhere.herokuapp.com/http://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&appid=${OPENWEATHER_API_KEY}&units=metric`);
@@ -41,18 +53,52 @@ const getWeatherData = async (latitude, longitude) => {
     }
 };
 
+// get geolocation by city name
+const getCityGeolocation = async (city) => {
+    try {
+        let geolocationData = await fetch(`https://graphhopper.com/api/1/geocode?key=${GRAPHHOPPER_API_KEY}&q=${city}`);
+        geolocationData = await geolocationData.json();
+        return geolocationData.hits[0].point;
+    } catch (e) {
+        console.log("Something went wrong", e);
+    }
+};
 
+
+// display weather for current geolocation based on IP address
 getIp().then(ip => {
     let lat = ip.lat;
     let long = ip.lon;
     let location = ip.city;
     getWeatherData(lat, long).then(data => {
         $body.classList.remove('loading');
+        $app.classList.remove('hidden');
         displayWeather(data, location);
     });
 })
 
+// display form for adding a new city
+$addCityBtn.addEventListener("click", () => {
+    $addCityForm.hidden = false;
 
+// display weather based on user's search
+    $addCityForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        let city = $inputCity.value;
+        getCityGeolocation(city).then(geolocationData => {
+            let latitude = geolocationData.lat;
+            let longitude = geolocationData.lng;
+            // console.log(geolocationData);
+            getWeatherData(latitude, longitude).then(weather => {
+                let $newCityWeatherBox = $cityWeatherBox.cloneNode(true);
+                $app.appendChild($newCityWeatherBox);
+                displayWeather(weather, city);
+            });
+        });
+    })
+});
+
+// function for displaying weather data
 const displayWeather = (weatherData, location) => {
 
     console.log(weatherData);
@@ -81,17 +127,16 @@ const displayWeather = (weatherData, location) => {
         $daysOfTheWeekTemp[i].innerHTML = `${dayOfTheWeekTemp} &deg;C`;
         $dayOfTheWeekIcon[i].src = `images/icons/${getWeatherIcon(dayOfTheWeekIcon)}.svg`;
     }
-
-
 };
 
+// function for setting day of the week
 const getDayOfTheWeek = (timestamp) => {
     let dateToday = new Date(timestamp * 1000);
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     return days[dateToday.getDay()];
 };
 
-
+// function for setting weather icon
 const getWeatherIcon = (iconCode) => {
     switch (iconCode) {
         case '01d':
