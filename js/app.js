@@ -10,8 +10,8 @@ const $inputCity = document.querySelector("#search");
 
 // get button elements
 const $addCityBtn = document.querySelector("#add-city");
-const $closeWeatherBoxBtn = document.querySelectorAll(".module__weather .btn--close")
 const $closeFormBtn = document.querySelector(".module__form > button");
+const $closeWeatherBoxBtn = document.querySelectorAll(".btn--remove");
 
 
 // get elements for current weather display
@@ -99,18 +99,17 @@ $addCityForm.addEventListener("submit", (e) => {
         let longitude = geolocationData.lng;
         getWeatherData(latitude, longitude).then(weather => {
             let $newCityWeatherBox = $cityWeatherBox.cloneNode(true);
-            $app.insertBefore($newCityWeatherBox, $cityWeatherBox);
+            // $app.insertBefore($newCityWeatherBox, $cityWeatherBox);
+            $app.appendChild($newCityWeatherBox);
             displayWeather(weather, city);
+            $inputCity.value = "";
+            $addCityForm.hidden = true;
+            $newCityWeatherBox.querySelector('.btn--remove').addEventListener('click', function () {
+                let currentWeatherBox = this.parentElement;
+                removeWeatherBox(currentWeatherBox);
+            });
         });
     });
-});
-
-// close weather boxes
-$closeWeatherBoxBtn.forEach((button) => {
-    button.addEventListener("click", () => {
-            $app.removeChild(button.parentElement);
-        }
-    )
 });
 
 
@@ -143,7 +142,22 @@ const displayWeather = (weatherData, location) => {
         $daysOfTheWeekTemp[i].innerHTML = `${dayOfTheWeekTemp} &deg;C`;
         $dayOfTheWeekIcon[i].src = `images/icons/${getWeatherIcon(dayOfTheWeekIcon)}.svg`;
     }
-};
+
+
+}
+
+// close weather boxes
+$closeWeatherBoxBtn.forEach((button) => {
+    button.addEventListener("click", () => {
+        removeWeatherBox(button.parentElement);
+    })
+})
+
+const removeWeatherBox = (weatherBox) => {
+    weatherBox.parentElement.removeChild(weatherBox);
+}
+
+
 
 // function for setting day of the week
 const getDayOfTheWeek = (timestamp) => {
