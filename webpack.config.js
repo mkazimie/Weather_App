@@ -1,5 +1,5 @@
 const path = require("path");
-const entryPath = "Weather_App";
+const entryPath = "";
 const entryFile = "app.js";
 const Dotenv = require('dotenv-webpack');
 
