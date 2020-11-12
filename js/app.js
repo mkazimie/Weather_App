@@ -13,7 +13,6 @@ const $addCityBtn = document.querySelector("#add-city");
 const $closeFormBtn = document.querySelector(".module__form > button");
 const $closeWeatherBoxBtn = document.querySelectorAll(".btn--remove");
 
-
 // get elements for current weather display
 const $weatherInfo = document.querySelector(".weather__info");
 const $weatherDetails = document.querySelector(".weather__details");
@@ -46,7 +45,6 @@ const getWeatherData = async (latitude, longitude) => {
     try {
         let weatherData = await fetch(`https://cors-anywhere.herokuapp.com/http://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&appid=${OPENWEATHER_API_KEY}&units=metric`);
         weatherData = await weatherData.json();
-        // console.log(weatherData);
         return weatherData;
     } catch (e) {
         console.log('Something went wrong', e);
@@ -65,7 +63,6 @@ const getCityGeolocation = async (city) => {
         console.log("Something went wrong", e);
     }
 };
-
 
 // display weather for current geolocation based on IP address
 getIp().then(ip => {
@@ -87,7 +84,6 @@ $addCityBtn.addEventListener("click", () => {
 $closeFormBtn.addEventListener("click", () => {
     $addCityForm.hidden = true;
 })
-
 
 // display city weather based on user input
 $addCityForm.addEventListener("submit", (e) => {
@@ -112,26 +108,20 @@ $addCityForm.addEventListener("submit", (e) => {
     });
 });
 
-
 // function for displaying weather data
 const displayWeather = (weatherData, location) => {
-
     $body.classList.remove("loading");
-
     let humidity = weatherData.current.humidity;
     let pressure = weatherData.current.pressure;
     let temp = weatherData.current.temp;
     let windSpeed = weatherData.current.wind_speed;
     let weatherIconNow = weatherData.current.weather[0].icon;
-
-
     $city.innerHTML = location;
     $temperature.innerHTML = `${temp.toFixed()} &deg;C`;
     $humidity.innerHTML = `${humidity} %`;
     $pressure.innerHTML = `${pressure} hPa`;
     $windSpeed.innerHTML = `${windSpeed} m/s`;
     $icon.src = `images/icons/${getWeatherIcon(weatherIconNow)}.svg`;
-
 
     for (let i = 0; i < $daysOfTheWeek.length; i++) {
         const weatherDataDay = weatherData.daily[(i + 1) % 7]
@@ -142,8 +132,6 @@ const displayWeather = (weatherData, location) => {
         $daysOfTheWeekTemp[i].innerHTML = `${dayOfTheWeekTemp} &deg;C`;
         $dayOfTheWeekIcon[i].src = `images/icons/${getWeatherIcon(dayOfTheWeekIcon)}.svg`;
     }
-
-
 }
 
 // close weather boxes
@@ -157,14 +145,19 @@ const removeWeatherBox = (weatherBox) => {
     weatherBox.parentElement.removeChild(weatherBox);
 }
 
-
-
 // function for setting day of the week
 const getDayOfTheWeek = (timestamp) => {
     let dateToday = new Date(timestamp * 1000);
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     return days[dateToday.getDay()];
 };
+
+const getHour = (timestamp) => {
+    let dateToday = new Date(timestamp * 1000);
+    let hours = dateToday.getHours();
+    let minutes = dateToday.getMinutes();
+    return `${hours} : ${minutes}`;
+}
 
 // function for setting weather icon
 const getWeatherIcon = (iconCode) => {
@@ -196,6 +189,3 @@ const getWeatherIcon = (iconCode) => {
             return "fog";
     }
 }
-
-
-
